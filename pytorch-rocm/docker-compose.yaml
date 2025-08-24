@@ -1,0 +1,30 @@
+version: "3.3"
+
+services:
+  pytorch-rocm.local:
+    image: pytorch-rocm:latest
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      TZ: "Etc/GMT"
+      LANG: "C.UTF-8"
+    ipc: host
+    devices:
+      - /dev/kfd
+      - /dev/dri
+    group_add:
+      - "${RENDER_GID}"
+      - "${VIDEO_GID}"
+    volumes:
+      - ../mistral:/llm/mistral
+    networks:
+      - docker-compose-network
+
+networks:
+  docker-compose-network:
+    ipam:
+      config:
+        - subnet: 172.24.24.0/24
