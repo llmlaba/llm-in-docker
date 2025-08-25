@@ -2,7 +2,7 @@
 
 ## Reqirments
 - AMD Mi50/MI100 32Gb VRAM
-- Workstation 40 GB RAM, 200GB SSD, 750W Power supply 
+- Workstation 40 GB RAM, 1TB SSD, 750W Power supply 
 - Ubuntu 24.04 LTS
 - Docker CE and docker compose
 
@@ -22,9 +22,46 @@ git lfs install
 git clone https://huggingface.co/openai-community/gpt2 gpt2
 ```
 
+- Get the Mathstral GGUF
+```bash
+git lfs install
+git clone https://huggingface.co/lmstudio-community/mathstral-7B-v0.1-GGUF mathstral
+```
+
 ## Use cases
 
 ### llama.cpp in docker with CPU
+
+- Run container
+```bash
+cd llama.cpp-cpu
+./docker_env.sh up
+```
+
+- Check logs
+```bash
+docker container logs llamacpp-cpu_llamacpp-cpu.local_1
+```
+
+- Test request 
+```bash
+curl http://localhost:8080/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-4o-mini",
+    "messages": [{"role": "user", "content": "Continue this text: What you know about sun?"}],
+    "max_tokens": 60,
+    "temperature": 0.7,
+    "top_p": 0.95,
+    "stop": "eof"
+  }' | jq
+
+```
+
+- Stop container
+```bash
+./docker_env.sh down
+```
 
 ### PyTorch in docker with AMD ROCm
 
