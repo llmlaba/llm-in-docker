@@ -31,6 +31,8 @@ git clone https://huggingface.co/lmstudio-community/mathstral-7B-v0.1-GGUF maths
 ## Use cases
 
 ### llama.cpp in docker with CPU
+> Notes:
+> - Tested CPU Intel(R) Xeon(R) CPU E5-2630
 
 - Run container
 ```bash
@@ -48,7 +50,7 @@ docker container logs llamacpp-cpu_llamacpp-cpu.local_1
 curl http://localhost:8080/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "gpt-4o-mini",
+    "model": "",
     "messages": [{"role": "user", "content": "Continue this text: What you know about sun?"}],
     "max_tokens": 60,
     "temperature": 0.7,
@@ -63,7 +65,44 @@ curl http://localhost:8080/v1/chat/completions \
 ./docker_env.sh down
 ```
 
+### llama.cpp in docker with Vulkan
+> Notes:
+> - Tested GPU AMD Mi50
+
+- Run container
+```bash
+cd llama.cpp-vulkan
+./docker_env.sh up
+```
+
+- Check logs
+```bash
+docker docker container logs llamacpp-vulkan_llamacpp-vulkan.local_1
+```
+
+- Test request 
+```bash
+curl http://localhost:8080/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "",
+    "messages": [{"role": "user", "content": "Continue this text: What you know about sun?"}],
+    "max_tokens": 360,
+    "temperature": 0.7,
+    "top_p": 0.95,
+    "stop": "eof"
+  }' | jq
+
+```
+
+- Stop container
+```bash
+./docker_env.sh down
+```
+
 ### PyTorch in docker with AMD ROCm
+> Notes:
+> - Tested GPU AMD Mi50
 
 - Run container
 ```bash
@@ -96,6 +135,8 @@ curl -s http://localhost:8080/v1/completion \
 ```
 
 ### TensorFlow in docker with AMD ROCm
+> Notes:
+> - Tested GPU AMD Mi50
 
 - Run container
 ```bash

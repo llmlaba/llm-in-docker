@@ -1,0 +1,33 @@
+version: "3.3"
+
+services:
+  llamacpp-vulkan.local:
+    image: ghcr.io/ggml-org/llama.cpp:full-vulkan
+    entrypoint:
+      - /bin/bash
+      - -c
+      - |
+        #/app/llama-server --list-devices
+        /app/llama-server -m /models/mathstral/mathstral-7B-v0.1-Q4_K_M.gguf  --chat-template llama2 --port 8080 --host 0.0.0.0 --device Vulkan0 --n-gpu-layers 999
+    ports:
+      - "8080:8080"
+    environment:
+      TZ: "Etc/GMT"
+      LANG: "C.UTF-8"
+    ipc: host
+    devices:
+      - /dev/kfd
+      - /dev/dri
+    group_add:
+      - "${RENDER_GID}"
+      - "${VIDEO_GID}"
+    volumes:
+      - ../mathstral:/models/mathstral
+    networks:
+      - docker-compose-network
+
+networks:
+  docker-compose-network:
+    ipam:
+      config:
+        - subnet: 172.24.24.0/24
