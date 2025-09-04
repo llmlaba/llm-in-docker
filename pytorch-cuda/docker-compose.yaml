@@ -1,0 +1,30 @@
+version: "3.3"
+
+services:
+  pytorch-cuda.local:
+    image: pytorch-cuda:latest
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      TZ: "Etc/GMT"
+      LANG: "C.UTF-8"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    volumes:
+      - ../mistral:/llm/mistral
+    networks:
+      - docker-compose-network
+
+networks:
+  docker-compose-network:
+    ipam:
+      config:
+        - subnet: 172.24.24.0/24
