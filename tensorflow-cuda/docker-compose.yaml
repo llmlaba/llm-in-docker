@@ -1,0 +1,32 @@
+version: "3.3"
+
+services:
+  tensorflow-rocm.local:
+    image: tensorflow-rocm:latest
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      TZ: "Etc/GMT"
+      LANG: "C.UTF-8"
+      TF_CPP_MIN_LOG_LEVEL: "2"
+      TF_USE_LEGACY_KERAS: "1"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    volumes:
+      - ../gpt2:/llm/gpt2
+    networks:
+      - docker-compose-network
+
+networks:
+  docker-compose-network:
+    ipam:
+      config:
+        - subnet: 172.24.24.0/24

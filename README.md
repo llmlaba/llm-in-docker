@@ -203,3 +203,35 @@ curl -s http://localhost:8080/v1/completion \
 ```
 
 ### TensorFlow in docker with NVIDIA CUDA
+> Notes:
+> - Tested GPU Nvidia Tesla V100
+
+- Run container
+```bash
+cd tensorflow-cuda
+./docker_env.sh up
+```
+
+- Check logs
+```bash
+docker container logs tensorflow-cuda_tensorflow-rocm.local_1
+```
+
+- Test request 
+```bash
+curl -s http://localhost:8080/v1/completion \
+  -H "Content-Type: application/json" \
+  -d '{
+    "prompt": "What you know about sun?",
+    "max_tokens": 60,
+    "temperature": 0.7,
+    "top_p": 0.95,
+    "stop": "eof"
+  }' | jq
+
+```
+
+- Stop container
+```bash
+./docker_env.sh down
+```
